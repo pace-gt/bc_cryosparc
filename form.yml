@@ -1,0 +1,50 @@
+title: CryoSPARC
+cluster: "phoenix-dev"
+attributes:
+  bc_account:
+    label: "Charge Account"
+    required: true
+  qos:
+    widget: select
+    label: "Quality of Service"
+    options: 
+      - ["embers"]
+      - ["inferno"]
+    value: "inferno"
+  node_type:
+    id: node_type
+    label: "Node Type"
+    widget: select
+    options:
+      - ['NVIDIA GPU V100 16GB', 'V100_16GB']
+      - ['NVIDIA GPU RTX6000', 'RTX_6000']
+      - ['First available', 'first_avail']
+  num_cpus:
+    id: num_cpus
+    label: "Number of CPUs"
+    widget: number_field
+    min: 1
+    step: 1
+    value: 1
+  num_gpus:
+    id: num_gpus
+    label: "Number of GPUs"
+    widget: number_field
+    min: 1
+    step: 1
+    value: 1
+  num_mem:
+    id: num_mem
+    label: "Total Memory (GB)"
+    widget: number_field
+    min: 16 
+    step: 1
+    value: 16
+
+form:
+- bc_account
+- qos
+- node_type
+- num_cpus
+- num_gpus
+- num_mem

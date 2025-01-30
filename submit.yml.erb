@@ -1,0 +1,17 @@
+batch_connect:
+  template: basic
+script:
+  qos: <%= qos %>
+  native: 
+    - "--nodes=1"
+    - "--ntasks-per-node=1"
+    - "--cpus-per-task=<%= num_cpus.to_i %>"
+    - "--mem=<%= num_mem.to_i %>G"
+    <%- if node_type == "V100_16GB" -%>
+    - "--gres=gpu:V100:<%= num_gpus.to_i %>"
+    - "--constraint=V100-16GB"
+    <%- elsif node_type == "RTX_6000" -%>
+    - "--gres=gpu:RTX_6000:<%= num_gpus.to_i %>"
+    <%- else -%>
+    - "--gres=gpu:<%= num_gpus.to_i %>"
+    <%- end -%>

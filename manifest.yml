@@ -1,0 +1,5 @@
+name: CryoSPARC
+category: Interactive Apps
+subcategory: Compute Node Jobs
+role: batch_connect
+description: Starts CryoSPARC with 1 worker on 1 node
