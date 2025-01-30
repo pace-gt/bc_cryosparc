@@ -1,6 +1,23 @@
 title: CryoSPARC
 cluster: "phoenix-dev"
 attributes:
+  license_id:
+    id: license_id
+    label: "CryoSPARC License ID"
+    widget: text_field
+  db_path:
+    id: db_path
+    label: "CryoSPARC Database Path"
+    widget: text_field
+  # TODO: On dev cluster, path_selector is spinning endlessly
+  # db_path:
+  #   id: db_path
+  #   label: "CryoSPARC Database Path"
+  #   widget: path_selector
+  #   show_hidden: false
+  #   show_files: false
+  #   favorites:
+  #     - "<%= CurrentUser.home %>"
   bc_account:
     label: "Charge Account"
     required: true
@@ -42,6 +59,8 @@ attributes:
     value: 16
 
 form:
+- license_id
+- db_path
 - bc_account
 - qos
 - node_type
