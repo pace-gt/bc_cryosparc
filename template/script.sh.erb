@@ -22,25 +22,31 @@ xsetroot -solid "#D3D3D3"
 xfsettingsd --sm-client-disable &
 xfce4-panel --sm-client-disable &
 
-firefox --kiosk
+#
+# Start CryoSPARC instances
+#
 
-# =======================================
-# For non-VNC 
-# =======================================
-#unset DBUS_SESSION_BUS_ADDRESS
-#export CRYOSPARC_LICENSE_ID="<%= context.license_id %>"
-#export CRYOSPARC_MASTER_HOSTNAME="$host"
+unset DBUS_SESSION_BUS_ADDRESS
+export CRYOSPARC_LICENSE_ID="<%= context.license_id %>"
+export CRYOSPARC_MASTER_HOSTNAME="$host"
 #export CRYOSPARC_BASE_PORT="$port"
-#export CRYOSPARC_DB_PATH="<%= context.db_path %>"
-#
-## Cleanup.  TODO: See how much of this is strictly required
-#rm -rf "$CRYOSPARC_DB_PATH"
-#mkdir "$CRYOSPARC_DB_PATH"
-#rm -rf "$HOME/.apptainer/instances/logs/"
-#
-#apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_master.sif" cryosparcm
-#apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_worker.sif" cryosparcw
-#
-#apptainer instance list --logs
-#
-#sleep infinity
+export CRYOSPARC_BASE_PORT="41001"
+export CRYOSPARC_DB_PATH="<%= context.db_path %>"
+
+# Cleanup.  TODO: See how much of this is strictly required
+rm -rf "$CRYOSPARC_DB_PATH"
+mkdir "$CRYOSPARC_DB_PATH"
+rm -rf "$HOME/.apptainer/instances/logs/"
+
+apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_master.sif" cryosparcm
+apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_worker.sif" cryosparcw
+
+apptainer instance list --logs
+
+# TODO: Poll master to see when it's ready
+sleep 60
+
+# The --kiosk looks nice, but it can be a problem with multiple tabs
+#firefox --kiosk http://localhost:${CRYOSPARC_BASE_PORT}
+
+firefox http://localhost:${CRYOSPARC_BASE_PORT}
