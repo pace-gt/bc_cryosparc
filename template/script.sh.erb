@@ -1,20 +1,46 @@
 #!/usr/bin/env bash
 set -ex -o pipefail
 
-unset DBUS_SESSION_BUS_ADDRESS
-export CRYOSPARC_LICENSE_ID="<%= context.license_id %>"
-export CRYOSPARC_MASTER_HOSTNAME="$host"
-export CRYOSPARC_BASE_PORT="$port"
-export CRYOSPARC_DB_PATH="<%= context.db_path %>"
+# =======================================
+# For VNC
+# =======================================
 
-# Cleanup.  TODO: See how much of this is strictly required
-rm -rf "$CRYOSPARC_DB_PATH"
-mkdir "$CRYOSPARC_DB_PATH"
-rm -rf "$HOME/.apptainer/instances/logs/"
+# Set working directory to home directory
+cd "${HOME}"
 
-apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_master.sif" cryosparcm
-apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_worker.sif" cryosparcw
+#
+# Launch Xfce Window Manager and Panel
+#
+export SEND_256_COLORS_TO_REMOTE=1
+export XDG_CONFIG_HOME="<%= session.staged_root.join("config") %>"
+export XDG_DATA_HOME="<%= session.staged_root.join("share") %>"
+export XDG_CACHE_HOME="$(mktemp -d)"
+export $(dbus-launch)
 
-apptainer instance list --logs
+xfwm4 --compositor=off --sm-client-disable &
+xsetroot -solid "#D3D3D3"
+xfsettingsd --sm-client-disable &
+xfce4-panel --sm-client-disable &
 
-sleep infinity
+firefox --kiosk
+
+# =======================================
+# For non-VNC 
+# =======================================
+#unset DBUS_SESSION_BUS_ADDRESS
+#export CRYOSPARC_LICENSE_ID="<%= context.license_id %>"
+#export CRYOSPARC_MASTER_HOSTNAME="$host"
+#export CRYOSPARC_BASE_PORT="$port"
+#export CRYOSPARC_DB_PATH="<%= context.db_path %>"
+#
+## Cleanup.  TODO: See how much of this is strictly required
+#rm -rf "$CRYOSPARC_DB_PATH"
+#mkdir "$CRYOSPARC_DB_PATH"
+#rm -rf "$HOME/.apptainer/instances/logs/"
+#
+#apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_master.sif" cryosparcm
+#apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_worker.sif" cryosparcw
+#
+#apptainer instance list --logs
+#
+#sleep infinity

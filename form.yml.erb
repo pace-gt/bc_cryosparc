@@ -18,6 +18,8 @@ attributes:
   #   show_files: false
   #   favorites:
   #     - "<%= CurrentUser.home %>"
+  bc_vnc_resolution:
+    required: true
   bc_account:
     label: "Charge Account"
     required: true
@@ -61,6 +63,7 @@ attributes:
 form:
 - license_id
 - db_path
+- bc_vnc_resolution
 - bc_account
 - qos
 - node_type
