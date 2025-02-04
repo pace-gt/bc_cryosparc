@@ -45,7 +45,9 @@ my_port_used_nc(){
     nc -w 2 "$1" "$2" < /dev/null > /dev/null 2>&1
 }
 
+set +x
 my_port=$(my_find_port)
+set -x
 
 # Check the result 
 # TODO: If this check fails, the job termintates with 
