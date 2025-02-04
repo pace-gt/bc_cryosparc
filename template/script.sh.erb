@@ -43,10 +43,9 @@ apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/appta
 
 apptainer instance list --logs
 
-# TODO: Poll master to see when it's ready
-sleep 60
+# TODO: Poll cryosparcm instead of sleeping
+sleep 90
 
 # The --kiosk looks nice, but it can be a problem with multiple tabs
 #firefox --kiosk http://localhost:${CRYOSPARC_BASE_PORT}
-
 firefox http://localhost:${CRYOSPARC_BASE_PORT}
