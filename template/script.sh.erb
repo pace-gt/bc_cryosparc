@@ -84,30 +84,57 @@ xsetroot -solid "#D3D3D3"
 xfsettingsd --sm-client-disable &
 xfce4-panel --sm-client-disable &
 
-#
-# Start CryoSPARC instances
-#
-
 unset DBUS_SESSION_BUS_ADDRESS
+
+WORK_DIR="<%= context.work_dir %>/cryosparc-ood"
+mkdir -p "$WORK_DIR"
+
 export CRYOSPARC_LICENSE_ID="<%= context.license_id %>"
 export CRYOSPARC_MASTER_HOSTNAME="$host"
 # Don't use OOD's find_port here.  See explanation above.
 export CRYOSPARC_BASE_PORT="$my_port"
-export CRYOSPARC_DB_PATH="<%= context.db_path %>"
+export CRYOSPARC_DB_PATH="$WORK_DIR/db"
 
-# Cleanup.  TODO: See how much of this is strictly required
-rm -rf "$CRYOSPARC_DB_PATH"
-mkdir "$CRYOSPARC_DB_PATH"
+echo "setting CryoSPARC configuration"
+cat << EOF > "$WORK_DIR/config.sh"
+export CRYOSPARC_LICENSE_ID="$CRYOSPARC_LICENSE_ID"
+export CRYOSPARC_MASTER_HOSTNAME="$CRYOSPARC_MASTER_HOSTNAME"
+export CRYOSPARC_DB_PATH="$CRYOSPARC_DB_PATH"
+export CRYOSPARC_BASE_PORT="$CRYOSPARC_BASE_PORT"
+export CRYOSPARC_DEVELOP=false
+export CRYOSPARC_INSECURE=false
+export CRYOSPARC_CLICK_WRAP=true
+export CRYOSPARC_FORCE_HOSTNAME=true
+export CRYOSPARC_USE_GPU=true
+export CRYOSPARC_FORCE_USER=true
+export CRYOSPARC_MONGO_EXTRA_FLAGS=" "
+EOF
+echo "updated cryosparc config file"
+
+echo "creating CryoSPARC directories"
+mkdir -p "$CRYOSPARC_DB_PATH"
+rm -f "$CRYOSPARC_DB_PATH/mongod.lock"
+rm -f "$CRYOSPARC_DB_PATH/WiredTiger.lock"
+mkdir -p "$WORK_DIR/run"
+rm -f "$WORK_DIR/run/supervisord.pid"
+echo "created cryosparc directories"
+
 rm -rf "$HOME/.apptainer/instances/logs/"
 
-apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_master.sif" cryosparcm
-apptainer instance start --nv --overlay "$TMPDIR" "$HOME/install/cryosparc/apptainer/cryosparc_worker.sif" cryosparcw
+apptainer instance start --nv \
+    -B "$WORK_DIR/config.sh:/opt/cryosparc_master/config.sh" \
+    -B "$WORK_DIR/run:/opt/cryosparc_master/run" \
+    "$HOME/install/cryosparc/apptainer/cryosparc_master.sif" cryosparcm
+
+apptainer instance start --nv \
+    -B "$WORK_DIR/config.sh:/opt/cryosparc_worker/config.sh" \
+    "$HOME/install/cryosparc/apptainer/cryosparc_worker.sif" cryosparcw
 
 apptainer instance list --logs
 
 # TODO: Poll cryosparcm instead of sleeping
-sleep 90
+sleep 60
 
 # The --kiosk looks nice, but it can be a problem with multiple tabs
-#firefox --kiosk http://localhost:${CRYOSPARC_BASE_PORT}
-firefox http://localhost:${CRYOSPARC_BASE_PORT}
+firefox --kiosk http://localhost:${CRYOSPARC_BASE_PORT}
+#firefox http://localhost:${CRYOSPARC_BASE_PORT}

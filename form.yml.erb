@@ -5,14 +5,19 @@ attributes:
     id: license_id
     label: "CryoSPARC License ID"
     widget: text_field
-  db_path:
-    id: db_path
-    label: "CryoSPARC Database Path"
+  work_dir:
+    id: work_dir
+    label: "CryoSPARC Working Directory"
     widget: text_field
+    help: |
+      Used to store CryoSPARC database and session files.
+
+      Can be an empty directory (for a new session) or a directory from a previous
+      CryoSPARC OOD session (to re-use previous session).
   # TODO: On dev cluster, path_selector is spinning endlessly
-  # db_path:
-  #   id: db_path
-  #   label: "CryoSPARC Database Path"
+  # work_dir:
+  #   id: work_dir
+  #   label: "CryoSPARC Working Directory"
   #   widget: path_selector
   #   show_hidden: false
   #   show_files: false
@@ -62,7 +67,7 @@ attributes:
 
 form:
 - license_id
-- db_path
+- work_dir
 - bc_vnc_resolution
 - bc_account
 - qos

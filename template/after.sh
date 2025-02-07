@@ -1,3 +1,3 @@
 # TODO: Poll cryosparcm instead of sleeping
-sleep 120
+sleep 90
 echo "Done waiting"
