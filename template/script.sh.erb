@@ -125,7 +125,7 @@ apptainer instance start --nv \
     -B "$WORK_DIR/config.sh:/opt/cryosparc_master/config.sh" \
     -B "$WORK_DIR/config.sh:/opt/cryosparc_worker/config.sh" \
     -B "$WORK_DIR/run:/opt/cryosparc_master/run" \
-    "$HOME/install/cryosparc/apptainer/cryosparc_unified.sif" cryosparc
+    "/usr/local/pace-apps/manual/packages/cryosparc/cryosparc-4.6.2.sif" cryosparc
 
 apptainer instance list --logs
 
