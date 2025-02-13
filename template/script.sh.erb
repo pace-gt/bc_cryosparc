@@ -133,5 +133,5 @@ apptainer instance list --logs
 sleep 60
 
 # The --kiosk looks nice, but it can be a problem with multiple tabs
-firefox --kiosk http://localhost:${CRYOSPARC_BASE_PORT}
+firefox --kiosk --profile "<%= session.staged_root.join("firefox-profile") %>" http://localhost:${CRYOSPARC_BASE_PORT}
 #firefox http://localhost:${CRYOSPARC_BASE_PORT}

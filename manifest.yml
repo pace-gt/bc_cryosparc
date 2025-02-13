@@ -2,4 +2,14 @@ name: CryoSPARC
 category: Interactive Apps
 subcategory: Compute Node Jobs
 role: batch_connect
-description: Starts CryoSPARC with 1 worker on 1 node
+description: |
+  Starts CryoSPARC with 1 worker.  The worker can utilize all the GPUs that you requested.
+
+  At the CryoSPARC login page:
+
+   * Your username is `<PACE username>@gatech.edu`.  For example, `gburdell3@gatech.edu`
+   * Your password is the CryoSPARC license ID that you enter in the form below.
+
+  During the session, you can navigate backwards and forwards in your history
+  with Alt + 🠈 and Alt + 🠊.  This can be useful if you click on a link that
+  takes you to an external webpage, such as the CryoSPARC docs.  

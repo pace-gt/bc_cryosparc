@@ -5,15 +5,21 @@ attributes:
     id: license_id
     label: "CryoSPARC License ID"
     widget: text_field
+    help: |
+      The alpha-numeric license ID that you receive when you sign-up for
+      CryoSPARC.  To sign-up and receive a license ID, go to
+      https://cryosparc.com/download and complete the form.  
   work_dir:
     id: work_dir
-    label: "CryoSPARC Working Directory"
+    label: "CryoSPARC Session Directory"
     widget: text_field
     help: |
       Used to store CryoSPARC database and session files.
 
-      Can be an empty directory (for a new session) or a directory from a previous
-      CryoSPARC OOD session (to re-use previous session).
+      This can be an empty directory (for a new session) or a directory from a
+      previous CryoSPARC OOD session (to re-use previous session). Re-using a
+      previous session directory will retain all your job history and login
+      info from the previous session, and this is encouraged.
   # TODO: On dev cluster, path_selector is spinning endlessly
   # work_dir:
   #   id: work_dir
