@@ -119,7 +119,9 @@ mkdir -p "$WORK_DIR/run"
 rm -f "$WORK_DIR/run/supervisord.pid"
 echo "created cryosparc directories"
 
+set +x
 rm -rf "$HOME/.apptainer/instances/logs/"
+set -x
 
 apptainer instance start --nv \
     -B "$WORK_DIR/config.sh:/opt/cryosparc_master/config.sh" \

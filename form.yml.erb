@@ -4,7 +4,7 @@ attributes:
   license_id:
     id: license_id
     label: "CryoSPARC License ID"
-    widget: text_field
+    widget: password_field
     help: |
       The alpha-numeric license ID that you receive when you sign-up for
       CryoSPARC.  To sign-up and receive a license ID, go to
@@ -18,8 +18,8 @@ attributes:
 
       This can be an empty directory (for a new session) or a directory from a
       previous CryoSPARC OOD session (to re-use previous session). Re-using a
-      previous session directory will retain all your job history and login
-      info from the previous session, and this is encouraged.
+      previous session directory will retain all your job history  from the
+      previous session, and this is encouraged.
   # TODO: On dev cluster, path_selector is spinning endlessly
   # work_dir:
   #   id: work_dir
