@@ -5,7 +5,7 @@ script:
   native: 
     - "--nodes=1"
     - "--ntasks-per-node=<%= num_cores.blank? ? 1 : num_cores.to_i %>"
-    - "--mem-per-cpu=<%= num_mem.to_i %>G"
+    - "--mem=<%= num_mem.to_i %>G"
     <%- if node_type == "V100_16GB" -%>
     - "--gres=gpu:V100:<%= num_gpus.to_i %>"
     - "--constraint=rhel9,V100-16GB"
