@@ -1,5 +1,5 @@
-title: CryoSPARC
-cluster: "phoenix-dev"
+title: "CryoSPARC (RHEL9)"
+cluster: "phoenix-rh9"
 attributes:
   license_id:
     id: license_id
@@ -46,11 +46,66 @@ attributes:
     label: "Node Type"
     widget: select
     options:
-      - ['NVIDIA GPU V100 16GB', 'V100_16GB']
-      - ['NVIDIA GPU RTX6000', 'RTX_6000']
-      - ['First available', 'first_avail']
-  num_cpus:
-    id: num_cpus
+      - ['NVIDIA GPU A100 40GB', 'A100_40GB',
+          data-max-num-gpus: 2,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 64,
+          data-max-num-mem: 515,
+          data-max-bc-num-hours: 504
+        ]
+      - ['NVIDIA GPU A100 80GB', 'A100_80GB',
+          data-max-num-gpus: 8,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 64,
+          data-max-num-mem: 2051,
+          data-max-bc-num-hours: 504
+        ]
+      - ["NVIDIA GPU H100 HGX (64-core CPU)", "H100_HGX",
+          data-max-num-gpus: 8,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 64,
+          data-max-num-mem: 2063,
+          data-max-bc-num-hours: 72
+        ]
+      - ["NVIDIA GPU H100 DGX (112-core CPU)", "H100_DGX",
+          data-max-num-gpus: 8,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 112,
+          data-max-num-mem: 2063,
+          data-max-bc-num-hours: 72
+        ]
+      - ['NVIDIA GPU RTX6000', 'RTX_6000',
+          data-max-num-gpus: 4,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 24,
+          data-max-num-mem: 772,
+          data-max-bc-num-hours: 504
+        ]
+      - ['NVIDIA GPU V100 16GB', 'V100_16GB',
+          data-max-num-gpus: 2,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 24,
+          data-max-num-mem: 772,
+          data-max-bc-num-hours: 504
+        ]
+      - ['NVIDIA GPU V100 32GB', 'V100_32GB',
+          data-max-num-gpus: 2,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 24,
+          data-max-num-mem: 772,
+          data-max-bc-num-hours: 504
+        ]
+      - ['NVIDIA GPU L40S', 'L40S',
+          data-max-num-gpus: 8,
+          data-min-num-gpus: 1,
+          data-max-num-cores: 32,
+          data-max-num-mem: 515,
+          data-max-bc-num-hours: 72
+        ]
+    help: |
+      Hardware specs for all node types are listed [here](https://gatech.service-now.com/technology?id=kb_article_view&sysparm_article=KB0041976).
+  num_cores:
+    id: num_cores
     label: "Number of CPUs"
     widget: number_field
     min: 1
@@ -67,9 +122,16 @@ attributes:
     id: num_mem
     label: "Total Memory (GB)"
     widget: number_field
-    min: 16 
+    min: 1 
     step: 1
     value: 16
+  bc_num_hours:
+    help: |
+      Your job will terminate after this time limit.  
+      
+      * Jobs with shorter time limits are typically scheduled sooner.
+      * Your job will keep running even if you close your browser or lose your internet connection.  You can then re-connect to the same session later, if the time limit has not expired.  
+      * Your account will be charged while your job is running (even if it is not open in your browser).  If you are done with your work before your time expires, you can cancel the job and avoid being charged for unused time.  
 
 form:
 - license_id
@@ -78,6 +140,8 @@ form:
 - bc_account
 - qos
 - node_type
-- num_cpus
+- num_cores
 - num_gpus
 - num_mem
+- bc_num_hours
+- bc_email_on_started

@@ -1,4 +1,4 @@
-name: CryoSPARC
+name: CryoSPARC (RHEL9)
 category: Interactive Apps
 subcategory: Compute Node Jobs
 role: batch_connect
