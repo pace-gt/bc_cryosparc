@@ -7,28 +7,23 @@ attributes:
     widget: password_field
     help: |
       The alpha-numeric license ID that you receive when you sign-up for
-      CryoSPARC.  To sign-up and receive a license ID, go to
+      CryoSPARC.  To receive a license ID, go to
       https://cryosparc.com/download and complete the form.  
   work_dir:
-    id: work_dir
+    widget: path_selector
     label: "CryoSPARC Session Directory"
-    widget: text_field
+    directory: "<%= CurrentUser.home %>"
+    required: true
+    show_hidden: false
+    show_files: false
+    #favorites:
+    #  - "<%= CurrentUser.home %>"
     help: |
       Used to store CryoSPARC database and session files.
 
       This can be an empty directory (for a new session) or a directory from a
-      previous CryoSPARC OOD session (to re-use previous session). Re-using a
-      previous session directory will retain all your job history  from the
-      previous session, and this is encouraged.
-  # TODO: On dev cluster, path_selector is spinning endlessly
-  # work_dir:
-  #   id: work_dir
-  #   label: "CryoSPARC Working Directory"
-  #   widget: path_selector
-  #   show_hidden: false
-  #   show_files: false
-  #   favorites:
-  #     - "<%= CurrentUser.home %>"
+      previous CryoSPARC OOD session (to resume a previous session). Re-using a
+      session directory will retain your work history and is encouraged.
   bc_vnc_resolution:
     required: true
   bc_account:
@@ -44,9 +39,6 @@ attributes:
     value: "inferno"
     help: |
       Determines the priority of this job and whether your job incurs account charges. See our [QOS guide](https://gatech.service-now.com/home?id=kb_article_view&sysparm_article=KB0041998#qos-on-the-phoenix-slurm-cluster) for full info. 
-      
-      * inferno: Jobs have normal priority are charged to your account.  
-      * embers:  Jobs are not charged to your account but have lower priority.   
   node_type:
     id: node_type
     label: "Node Type"
