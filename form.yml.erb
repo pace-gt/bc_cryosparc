@@ -16,8 +16,9 @@ attributes:
     required: true
     show_hidden: false
     show_files: false
-    #favorites:
-    #  - "<%= CurrentUser.home %>"
+    favorites:
+      - "<%= CurrentUser.home %>"
+      - "<%= CurrentUser.home %>/project"
     help: |
       Used to store CryoSPARC database and session files.
 
@@ -107,20 +108,20 @@ attributes:
     widget: number_field
     label: "Number of cores (CPUs)"
     # Max and val set properly using dynamic web forms
-    min: 1
+    min: 4
     step: 1
     value: 4
   num_mem:
     widget: number_field
     label: "Memory (GB)"
-    min: 1
+    min: 64
     step: 1
-    value: 8
+    value: 64
   num_gpus:
     label: "Number of GPUs"
     widget: number_field
     # Min, max, and val set properly using dynamic web forms
-    min: 0
+    min: 1
     step: 1
     value: 0
   bc_num_hours:
