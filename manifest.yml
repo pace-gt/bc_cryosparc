@@ -1,6 +1,6 @@
 name: CryoSPARC (RHEL9)
-category: Interactive Apps
-subcategory: Compute Node Jobs
+category: RHEL9 Interactive Apps
+subcategory: Applications
 role: batch_connect
 description: |
   Starts CryoSPARC with 1 worker and 1 or more GPUs.  
