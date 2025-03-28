@@ -8,3 +8,8 @@ for providing their implementation as a starting point.
 
 * https://github.com/slaclab/slac-ood-cryosparc/tree/main
 * https://github.com/slaclab/cryosparc-docker
+
+This app runs CryoSPARC master and worker as services within a single Apptainer
+instance.  The Apptainer image was built from
+[`apptainer/cryosparc-latest.def`](apptainer/cryosparc-latest.def), which is
+included here for reference.

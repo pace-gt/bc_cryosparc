@@ -1,0 +1,133 @@
+bootstrap: docker
+from: nvcr.io/nvidia/cuda:12.8.0-runtime-ubuntu24.04
+
+
+%post
+
+  apt-get -y update
+  apt-get -y install curl iputils-ping less
+
+  # To get `cryosparcm log` to work correctly
+  ln -s /usr/bin/lesspipe /usr/bin/lesspipe.sh
+  
+
+  # ==========================================================================
+  # Download and untar master source.  Requires a valid license ID, which you should
+  # pass to apptainer via this the CRYOSPARC_LICENSE_ID template arg:
+  #
+  #     apptainer build --build-arg CRYOSPARC_LICENSE_ID="your_license_id" ...
+  #
+  # ==========================================================================
+
+  CRYOSPARC_LICENSE_ID="6a8c244c-b691-11ef-bdf1-1f216abde594"
+  cd /opt
+  curl -L "https://get.cryosparc.com/download/master-latest/$CRYOSPARC_LICENSE_ID" -o cryosparc_master.tar.gz
+  tar -xzvf cryosparc_master.tar.gz
+  rm cryosparc_master.tar.gz
+
+  # ==========================================================================
+  # * For license, hostname, and port: the install-time values are set in config.sh
+  #   but are not intended to be used at runtime.  At runtime, you must set
+  #   the following environment variables to the appropriate values:
+  #
+  #     CRYOSPARC_LICENSE_ID
+  #     CRYOSPARC_MASTER_HOSTNAME
+  #     CRYOSPARC_BASE_PORT
+  #
+  # * For dbpath, you can either (a) set the env variable CRYOSPARC_DB_PATH or
+  #   (b) bind-mount a directory to /opt/cryosparc_db, such as
+  #
+  #     apptainer instance start --bind $HOME/cryosparc_db:/opt/cryosparc_db
+  #
+  # See the CryoSPARC docs for more info about available env variables:
+  #
+  #     https://guide.cryosparc.com/setup-configuration-and-management/management-and-monitoring/environment-variables
+  # ==========================================================================
+
+  cd /opt/cryosparc_master
+  ./install.sh \
+      --yes \
+      --license "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+      --hostname 127.0.0.1 \
+      --port 41000 \
+      --dbpath /opt/cryosparc_db
+
+  # ==========================================================================
+  # Download and untar worker source.  Requires a valid license ID, which you should
+  # pass to apptainer via this the CRYOSPARC_LICENSE_ID template arg:
+  #
+  #     apptainer build --build-arg CRYOSPARC_LICENSE_ID="your_license_id" ...
+  #
+  # ==========================================================================
+
+  cd /opt
+  curl \
+    -L "https://get.cryosparc.com/download/worker-latest/$CRYOSPARC_LICENSE_ID" \
+    -o cryosparc_worker.tar.gz
+  tar -xzvf cryosparc_worker.tar.gz
+  rm cryosparc_worker.tar.gz
+
+  cd /opt/cryosparc_worker
+  ./install.sh \
+      --yes \
+      --license "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+
+%environment
+  export PYTHONNOUSERSITE=1
+  export PATH=/opt/cryosparc_master/bin:/opt/cryosparc_master/deps/external/mongodb/bin:/opt/cryosparc_worker/bin:$PATH
+
+
+%startscript
+  .  /opt/cryosparc_master/config.sh
+
+  if [ ! -z "$(ls -A $CRYOSPARC_DB_PATH)" ]; then
+      echo "repairing db"
+      mongod --dbpath "$CRYOSPARC_DB_PATH" --repair
+  fi
+
+  echo "starting CryoSPARC"
+  if [ -z "$(ls -A $CRYOSPARC_DB_PATH)" ]; then
+      cryosparcm start
+  else
+      #make sure db port is set properly
+      cryosparcm start database
+      cryosparcm fixdbport
+      cryosparcm restart
+      echo "fixed db port"
+  fi
+
+  if cryosparcm listusers | grep -q "${USER}@gatech.edu"; then
+      cryosparcm resetpassword --email "${USER}@gatech.edu" --password "$CRYOSPARC_LICENSE_ID"
+  else
+      cryosparcm createuser \
+      --email "${USER}@gatech.edu" \
+      --password "$CRYOSPARC_LICENSE_ID" \
+      --username "$USER" \
+      --firstname "$(getent passwd "$USER" | cut -d: --fields=5 | cut --fields=1 -d ' ')" \
+      --lastname  "$(getent passwd "$USER" | cut -d: --fields=5 | cut --fields=2- -d ' ')"
+  fi
+
+  # Attempt to update worker config.  If not, create new worker
+  # TODO: Figure out how to query worker status from cryosparcm
+  cryosparcw connect \
+    --update \
+    --worker "$CRYOSPARC_MASTER_HOSTNAME" \
+    --master "$CRYOSPARC_MASTER_HOSTNAME" \
+    --port "$CRYOSPARC_BASE_PORT" \
+    --ssdpath "$TMPDIR" \
+    --lane lane1 \
+    --newlane \
+    --cpus "$SLURM_CPUS_ON_NODE"
+
+  if [ $? -ne 0 ]; then
+    echo "attempting to connect new worker" > /dev/stderr
+    cryosparcw connect \
+      --worker "$CRYOSPARC_MASTER_HOSTNAME" \
+      --master "$CRYOSPARC_MASTER_HOSTNAME" \
+      --port "$CRYOSPARC_BASE_PORT" \
+      --ssdpath "$TMPDIR" \
+      --lane lane1 \
+      --newlane \
+      --cpus "$SLURM_CPUS_ON_NODE"
+  fi
